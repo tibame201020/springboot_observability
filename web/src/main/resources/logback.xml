@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<configuration>
+
+    <property resource="application.properties" />
+    <property name="pattern" value="%d{yyyy-MM-dd HH:mm:ss.SSS} %yellow(%-5level) %magenta([%+10thread]) %cyan([traceId: %X{traceId:-} spanId: %X{spanId:-}]) %yellow(%logger{15}) - %msg%n" />
+    <appender name="STDOUT" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder>
+            <pattern>${pattern}</pattern>
+        </encoder>
+    </appender>
+
+
+    <appender name="LOKI" class="com.github.loki4j.logback.Loki4jAppender">
+        <http>
+            <url>${loki.push.url}</url>
+        </http>
+        <format>
+            <label>
+                <pattern>app=${spring.application.name},host=${HOSTNAME}, traceId=%mdc{traceId:-none}, spanId=%mdc{spanId:-none},level=%level</pattern>
+            </label>
+            <message>
+                <pattern>${pattern}</pattern>
+            </message>
+        </format>
+    </appender>
+
+    <root>
+        <level value="INFO"/>
+        <appender-ref ref="STDOUT"/>
+        <appender-ref ref="LOKI"/>
+    </root>
+
+</configuration>
