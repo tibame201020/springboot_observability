@@ -13,11 +13,7 @@ public class RestApi {
 
     @RequestMapping("/test")
     public String test() {
-        String traceId = Span.current().getSpanContext().getTraceId();
-        String spanId = Span.current().getSpanContext().getSpanId();
-
-        log.info("traceId: " + traceId);
-        log.info("spanId: " + spanId);
+        log.info("in controller");
         return "from controller";
     }
 }
