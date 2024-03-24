@@ -25,14 +25,23 @@ import org.springframework.core.env.Environment;
 @RequiredArgsConstructor
 public class OpenTelemetryConfig {
     private final Environment environment;
+
+    /**
+     * 標註resource value
+     * 便於後續grafana filter
+     * service: 專案名稱
+     * environment: 執行環境
+     */
     private Resource createApplicationResource() {
         AttributesBuilder attributesBuilder = Attributes.builder()
-                .put("application.name", "aaaaaaa")
-                .put(ResourceAttributes.SERVICE_NAME, "bbbbbbbbbb")
-                .put("environment", "cccccccccccc");
+                .put(ResourceAttributes.SERVICE_NAME, environment.getRequiredProperty("management.metrics.tags.service"))
+                .put(ResourceAttributes.DEPLOYMENT_ENVIRONMENT, environment.getRequiredProperty("management.metrics.tags.env"));
         return Resource.getDefault().merge(Resource.create(attributesBuilder.build()));
     }
 
+    /**
+     * tracer provider
+     */
     private SdkTracerProvider sdkTracerProvider() {
         return SdkTracerProvider.builder()
                 .addSpanProcessor(
@@ -46,6 +55,9 @@ public class OpenTelemetryConfig {
                 .build();
     }
 
+    /**
+     * metric provider
+     */
     private SdkMeterProvider sdkMeterProvider() {
         return SdkMeterProvider.builder()
                 .registerMetricReader(
@@ -59,6 +71,9 @@ public class OpenTelemetryConfig {
                 .build();
     }
 
+    /**
+     * logger provider
+     */
     private SdkLoggerProvider sdkLoggerProvider() {
         return SdkLoggerProvider.builder()
                 .addLogRecordProcessor(
