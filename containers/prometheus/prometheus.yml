@@ -1,0 +1,38 @@
+global:
+  scrape_interval: 15s
+  evaluation_interval: 15s
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+rule_files:
+scrape_configs:
+  - job_name: "cloud"
+    scrape_interval: 1s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['192.168.0.101:7001']
+
+    basic_auth:
+      username: 'username'
+      password: 'password'
+
+  - job_name: "cloud2"
+    scrape_interval: 1s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['192.168.0.101:7002']
+
+    basic_auth:
+      username: 'username'
+      password: 'password'
+
+  - job_name: "adminServer"
+    scrape_interval: 1s
+    metrics_path: '/actuator/prometheus'
+    static_configs:
+      - targets: ['192.168.0.101:7003']
+
+    basic_auth:
+      username: 'username'
+      password: 'password'
